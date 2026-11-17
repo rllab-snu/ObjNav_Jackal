@@ -1,0 +1,15 @@
+# Client-side Python deps for robot/run_robot.py (install AFTER torch + SAM 3; see README).
+numpy==1.26.4            # SAM 3 requires numpy<2
+scipy
+scikit-image
+scikit-fmm
+opencv-python<4.10       # last series built against numpy<2; GUI build for --render
+imageio
+imageio-ffmpeg           # bundled FFmpeg/libx264 for --record videos
+pyyaml
+pillow
+paramiko                 # SSH backend to the Jackal
+einops
+psutil
+matplotlib
+pycocotools              # imported by sam3.model_builder (not in SAM 3's own deps)

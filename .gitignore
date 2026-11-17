@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+
+# SAM 3 / habitat-lab source checkouts (cloned during setup, see README)
+/third_party/
+
+# run recordings (--record)
+/outputs/
+
+# occupancy-map collection output (collect_occupancy_map.py)
+/output_maps/
+
+# topology renders / score heatmaps (render_topology.py, ensemble_priors.py)
+/topo_data/score/renders/
+
+# image-carrying topology rebuilt from topo_data/base/ (README Section 6.2); not shipped
+/topo_data/base_topology.pkl

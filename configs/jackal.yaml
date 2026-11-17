@@ -1,0 +1,185 @@
+# Real-robot (Jackal) navigation config.
+#
+# `map` and `cameras` are per-robot HARDWARE and are REQUIRED here -- robot/config.py
+# reads them with no fallback, so a missing/typo'd value errors loudly instead of
+# silently using a wrong default (e.g. depth_scale -> 1.0 would put D455 16-bit-mm depth
+# off by 1000x). The task/tuning blocks (localizer / detection / SAM 3 / dynamic_map /
+# goal) are ALSO kept here for visibility. Some values intentionally override the code
+# fallback and/or sim baseline; removing one of those keys therefore changes behaviour.
+# The Jackal connection + fixed
+# 0.25 m / 30 deg steps + low-level control constants live in robot/jackal.py.
+# Goal OBJECT category is set on the CLI:  python -m robot.run_robot --goal chair
+# Consumed by robot/config.py -> robot/run_robot.py.
+#
+# Per-line tags:
+#   [required]     per-robot hardware; NO code fallback -> must be set here (or it errors)
+#   [default]         same value as the owning code/module fallback -> safe to omit
+#   [robot override]  intentionally differs from the code fallback and/or sim baseline
+
+# --- base occupancy map ----------------------------------------------------------
+map:
+  path: occupancy_map/base_occ_map.dat.gz   # [required] shared base occ map
+  agent_radius_m: 0.10              # [required] robot footprint radius (planner erosion)
+
+# --- cameras (all fields [required]; measured Daejeon dual-D455 values) -----------
+# MAIN drives the localizer scan (height_m must match how the occ map was built, sim
+# 1.0 m); SUB (higher/tilted) is fused in for detection. Delete `sub` for main-only.
+# forward/right offsets are the measured base-centre -> optical-centre translations
+# (both cameras: 0.15 m forward, laterally centred); zero means that axis is centred.
+cameras:
+  main:                           # physical camera_2 (topic + intrinsics), main mounting
+    topic_rgb: /camera_2/color/image_raw                  # [required]
+    topic_depth: /camera_2/aligned_depth_to_color/image_raw  # [required]
+    width: 640                    # [required]
+    height: 480                   # [required]
+    fx: 385.9006042480469         # [required] intrinsics (camera_2)
+    fy: 385.314453125             # [required]
+    cx: 322.70361328125           # [required]
+    cy: 246.41160583496094        # [required]
+    depth_scale: 0.001            # [required] raw 16-bit mm -> metres
+    max_depth_m: 10.0             # [required] depth clip / localizer+detector range
+    height_m: 1.0                 # [required] optical-centre height above the floor
+    tilt_deg: 0.0                 # [required] downward pitch (0 = level)
+    forward_offset_m: 0.15        # [required] base rotation centre -> optical centre, forward (measured)
+    right_offset_m: 0.0           # [required] base rotation centre -> optical centre, right (measured)
+  sub:                            # physical camera_1; OPTIONAL block: delete for main-only
+    topic_rgb: /camera_1/color/image_raw                  # [required]
+    topic_depth: /camera_1/aligned_depth_to_color/image_raw  # [required]
+    width: 640                    # [required]
+    height: 480                   # [required]
+    fx: 385.92919921875           # [required] intrinsics (camera_1)
+    fy: 385.4710388183594         # [required]
+    cx: 314.865966796875          # [required]
+    cy: 246.5614471435547         # [required]
+    depth_scale: 0.001            # [required]
+    max_depth_m: 10.0             # [required]
+    height_m: 1.2                 # [required]
+    tilt_deg: 30.0                # [required]
+    forward_offset_m: 0.15        # [required] base rotation centre -> optical centre, forward (measured)
+    right_offset_m: 0.0           # [required] base rotation centre -> optical centre, right (measured)
+
+# --- task / tuning (mix of defaults and explicit robot overrides) -----------------
+
+# localizer (ParticleFilterLocalizer; module defaults = v3 recovery + cumulative + settled).
+# The robot start pose is ALWAYS unknown -> global MCL (spin in place until converged);
+# this is not configurable.
+localizer:
+  max_localize_steps: 80          # [default] spin/search budget before proceeding anyway
+  overrides:
+    # Global-search likelihood robustness. Consecutive 30° views overlap heavily, so cap
+    # how far one frame may demote a pose and resample once per half-turn to refresh the
+    # surviving modes. These are shared module/sim defaults, repeated here for visibility.
+    global_loglik_cap: 10.0       # [default] max per-frame loss vs that frame's best pose
+    resample_rot_deg: 180.0       # [default] first pure-spin resample occurs at 210° (>180°)
+    converge_std: 0.7            # [robot override; module/sim PF default 0.5]
+    converge_hold: 2             # [robot override; module/sim PF default 5]
+    min_converge_trans: 0.0      # [default] allow in-place convergence after the yaw gate
+    min_converge_yaw_deg: 180.0  # [default] minimum accumulated absolute rotation
+    settle_std: 0.5              # [robot override; module/sim PF default 0.2]
+    settle_hold: 3               # [robot override; module/sim PF default 8]
+
+    # After convergence, remove residual map-wide aliases and retain only the local
+    # posterior support.  Recorded exp_0922 sweeps retained at least 95.8% of the
+    # converged posterior at 0.75 m while preventing multi-metre mode resurrection.
+    tracking_radius_m: 0.75      # [default] local cloud radius after global convergence
+    cum_init_cnt: 10             # [default] prior-frame inertia, restored after resampling
+
+    # Likelihood-gap re-globalization is intentionally disabled on the robot. The
+    # separate collision-based diverge_guard/safe_veto recovery in `nav` stays enabled.
+    divergence_recovery: false   # [robot override; module/sim PF default true]
+    div_gap: 80                  # [default; inactive while divergence_recovery=false]
+    div_hold: 6                  # [default; inactive while divergence_recovery=false]
+    div_check_every: 1           # [default; inactive while divergence_recovery=false]
+
+    # OPT-IN (default off): score a windowed accumulated local submap against the map for the
+    # likelihood instead of a single scan -- more geometry disambiguates feature-poor frames,
+    # cost bounded by max_scan_points. Set accum_scan: true and tune the window (recent frames
+    # fused). Experimental -- validate SR/ATE before relying on it (correlated frames can make
+    # the belief over-confident).
+    accum_scan: false            # [default]
+    accum_scan_window: 8         # [default]
+
+# pre-convergence early_nav + post-convergence collision shield / divergence guard.
+# These nav-extension values mirror run_eval. Matching these flags does not make the
+# complete robot runtime identical: sensor, motion, detector, and PF overrides differ.
+# Consumed via RobotAgent._init_nav_extensions.
+nav:
+  early_nav: true                 # [default] odometry-local-map safe motion before convergence
+  diverge_guard: true             # [default] re-globalize if the converged policy keeps ramming
+  diverge_bad_hold: 8             # [default]
+  safe_veto: false                # [robot override] disable forward collision veto/wall-follow
+  safe_veto_hold: 20              # [default] stuck wall-follow steps before re-globalize
+  safe_veto_use_map: true         # [default] veto also uses the short-window odom local map
+  last_mile_veto_off: 1.2         # [default] within this dist of the goal, suspend veto+dguard (m)
+  fmm_lastmile: false             # [default] combo local last-mile via FMM (greedy is better)
+  combo_w_info: 1.0               # [default] infogain weight
+  combo_w_sub: 1.0                # [default] frontier-subgoal weight
+
+# object-goal detection (goal OBJECT category comes from --goal, not here)
+detection:
+  detector: sam3                  # [default] 'sam3' (only real option on a robot) or 'none'
+  min_goal_pixels: 1              # [robot override] accept any valid-depth target pixel
+  last_mile_range_m: 5.0          # [default]
+  goal_count_threshold: 1           # [shared default] first valid detection starts last-mile
+  lost_detection_steps: 500       # run max; detection-loss cancellation effectively disabled
+  goal_ema: 0.9                   # [default] weight of the latest accepted target detection
+  goal_jump_reject_m: 1.5         # [default] larger single-frame corrections need confirmation
+  goal_jump_confirmations: 2      # [default] consecutive consistent large corrections to rebase
+  goal_jump_consistency_m: 0.5    # [default] max separation between those corrections
+  stop_distance_m: 0.5            # [default] early_nav + planner arrival radius (m)
+  object_stop_distance_m: 0.7     # direct PF-pose -> object target STOP distance (m)
+  face_tolerance_deg: null        # [default] null -> turn_angle/2 + 5 deg (= 20 deg)
+                                  # 5-deg slack prevents half-turn boundary oscillation
+  source_max_distance_m: 1.0      # [default] maximum distance searched for a safe source
+  source_band_width_m: 0.20       # [default] nearest valid source distance + this band (clipped at 1 m)
+  # max_face_turns is derived from turn_angle (round(360/turn)+1 = 13), not a config knob
+
+# In-process SAM 3 (no server; loaded directly, needs third_party/sam3 + weights)
+sam3:
+  bpe_path: third_party/sam3/sam3/assets/bpe_simple_vocab_16e6.txt.gz  # [default] (run_robot overrides at runtime)
+  device: cuda                    # [default]
+  confidence: 0.5                 # [default] robot_utils reference value; earlier tests used 0.3
+
+# search phase before detection (how the robot picks explore subgoals until SAM 3 fires)
+search:
+  lastmile_search: topo           # [default] visit nodes by per-view object-prior score
+                                  #   (highest first) and face the best view
+  topo_update: "off"              # [default] 'off' uses the stored prior only; 'view' re-scores
+                                  #   each arrived view from its LIVE image with a resident Qwen VLM
+                                  #   (dynamic scenes; per-view, ~1s each). Needs the robot_objnav env.
+  topo_path: topo_data/topo_graph/base_topology.pkl  # [default] runtime metadata; raw images stripped
+  prior_scores: topo_data/score/scores.json  # [default] object-first stored prior (loaded per goal)
+
+# Online occupancy update (avoid NEW obstacles not in the base map)
+dynamic_map:
+  enabled: false                  # [default]
+  gate: settled                   # [default]; pick ONE of: settled  or  converged
+
+# go-to-pose target (currently unused on the robot path; kept for a future go-to-pose)
+goal:
+  x: -3.0                         # [robot override; RobotConfig default 0.0]
+  z: 3.0                          # [robot override; RobotConfig default 0.0]
+  yaw_deg: 0.0                    # [default]
+  radius_m: 0.5                   # [default] STOP within this distance of the goal
+
+# live visualization window (--render). Display only; a saved video keeps full resolution.
+render:
+  window_scale: 0.8               # [robot override; RobotConfig default 0.6]
+
+# low-level drive (-> JackalConnectionConfig). The fixed 0.25 m / 30 deg actions use a smooth
+# odometry controller; these tune its cruise speed + acceleration. Omit a key to keep its default.
+# For the 0.25 m step, ACCELERATION is the main lever (raising linear_speed past ~0.25 m/s does
+# nothing at the default accel, since sqrt(accel*0.25 m) caps the reachable speed).
+drive:
+  linear_speed: 0.25              # [robot override; backend default 0.18] forward cruise (m/s)
+  angular_speed: 0.62             # [robot override; backend default 0.45] turn cruise (rad/s)
+                                  # = 0.51*sqrt(accel) so a 30deg turn
+                                  # reaches a cruise plateau (trapezoid like forward). retune later.
+  linear_acceleration: 0.5        # [robot override; backend default 0.25] forward ramp (m/s^2)
+  angular_acceleration: 1.5       # [robot override; backend default 0.8] turn ramp (rad/s^2)
+                                  # lowered from 3.0 to get the plateau
+  # Finish the cruise phase this long before the odometry-only brake point.
+  # The bridge multiplies this by the live odometry velocity; speed/accel stay unchanged.
+  distance_brake_delay_s: 0.20    # [robot override; backend default 0.10]
+  # Same live-odometry delay compensation for 30-degree turn goals.
+  angle_brake_delay_s: 0.10       # [default]
