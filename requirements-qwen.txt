@@ -1,0 +1,7 @@
+# Extra deps for topology prior scoring with Qwen (qwen_priors/, README section 7) and the
+# optional live re-scoring (search.topo_update: view). Install into the robot env on top of
+# requirements.txt. Versions are the ones the shipped scores were generated with.
+transformers==5.16.1
+accelerate==1.14.0
+bitsandbytes==0.50.2
+qwen-vl-utils==0.0.14
