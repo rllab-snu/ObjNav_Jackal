@@ -1,0 +1,126 @@
+{
+  "config": "configs/jackal.yaml",
+  "map": "occupancy_map/base_occ_map.dat.gz",
+  "num_dirs": 12,
+  "turn_deg": 30,
+  "turn": "right",
+  "directions": [
+    {
+      "index": 0,
+      "nominal_deg": 0,
+      "est_x": 0.24451228304309752,
+      "est_z": 3.330845820508359,
+      "est_yaw_deg": -65.2528386006909,
+      "converged": false,
+      "spread_m": 2.4183696844124243
+    },
+    {
+      "index": 1,
+      "nominal_deg": 30,
+      "est_x": 1.4954087076309177,
+      "est_z": 2.282527777123545,
+      "est_yaw_deg": -144.07685269026848,
+      "converged": false,
+      "spread_m": 1.1208656467163485
+    },
+    {
+      "index": 2,
+      "nominal_deg": 60,
+      "est_x": 0.833996260276385,
+      "est_z": 2.0694311143992747,
+      "est_yaw_deg": -120.13000958729499,
+      "converged": false,
+      "spread_m": 1.9540778463973814
+    },
+    {
+      "index": 3,
+      "nominal_deg": 90,
+      "est_x": -5.359860409901684,
+      "est_z": 3.032242780321418,
+      "est_yaw_deg": 95.08760000003318,
+      "converged": false,
+      "spread_m": 0.016301984252842818
+    },
+    {
+      "index": 4,
+      "nominal_deg": 120,
+      "est_x": -5.362083162352398,
+      "est_z": 3.0309406824568064,
+      "est_yaw_deg": 128.46400932064262,
+      "converged": false,
+      "spread_m": 0.013504591488832415
+    },
+    {
+      "index": 5,
+      "nominal_deg": 150,
+      "est_x": -5.331352602299953,
+      "est_z": 3.0324666714062185,
+      "est_yaw_deg": 158.6605659133893,
+      "converged": false,
+      "spread_m": 0.02145764457416811
+    },
+    {
+      "index": 6,
+      "nominal_deg": 180,
+      "est_x": -5.342897102384911,
+      "est_z": 3.0878714060383414,
+      "est_yaw_deg": -175.65272989556502,
+      "converged": false,
+      "spread_m": 0.13388743499956995
+    },
+    {
+      "index": 7,
+      "nominal_deg": 210,
+      "est_x": -5.349041032358565,
+      "est_z": 3.1617598065487647,
+      "est_yaw_deg": -147.81124334437087,
+      "converged": false,
+      "spread_m": 0.13213051058373168
+    },
+    {
+      "index": 8,
+      "nominal_deg": 240,
+      "est_x": -5.366876489511901,
+      "est_z": 3.405278014295977,
+      "est_yaw_deg": -125.66427329380382,
+      "converged": false,
+      "spread_m": 0.05503062800451365
+    },
+    {
+      "index": 9,
+      "nominal_deg": 270,
+      "est_x": -5.353815736243844,
+      "est_z": 3.0990636298586525,
+      "est_yaw_deg": -82.99605848901145,
+      "converged": false,
+      "spread_m": 0.11519637671855859
+    },
+    {
+      "index": 10,
+      "nominal_deg": 300,
+      "est_x": -5.369512047939284,
+      "est_z": 3.1199557847418244,
+      "est_yaw_deg": -54.362114919258836,
+      "converged": false,
+      "spread_m": 0.08262446362016966
+    },
+    {
+      "index": 11,
+      "nominal_deg": 330,
+      "est_x": -5.35890095270755,
+      "est_z": 3.1064754090045956,
+      "est_yaw_deg": -18.73059921653553,
+      "converged": false,
+      "spread_m": 0.023517826325614638
+    }
+  ],
+  "final": {
+    "index": 11,
+    "nominal_deg": 330,
+    "est_x": -5.35890095270755,
+    "est_z": 3.1064754090045956,
+    "est_yaw_deg": -18.73059921653553,
+    "converged": false,
+    "spread_m": 0.023517826325614638
+  }
+}

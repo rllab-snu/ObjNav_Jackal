@@ -1,0 +1,126 @@
+{
+  "config": "configs/jackal.yaml",
+  "map": "occupancy_map/base_occ_map.dat.gz",
+  "num_dirs": 12,
+  "turn_deg": 30,
+  "turn": "right",
+  "directions": [
+    {
+      "index": 0,
+      "nominal_deg": 0,
+      "est_x": 0.42405043354140887,
+      "est_z": 2.6395733827687615,
+      "est_yaw_deg": -134.20377359005272,
+      "converged": false,
+      "spread_m": 2.200867881198095
+    },
+    {
+      "index": 1,
+      "nominal_deg": 30,
+      "est_x": 1.2689685918569134,
+      "est_z": 3.9322173317039666,
+      "est_yaw_deg": 17.987955215113693,
+      "converged": false,
+      "spread_m": 2.2480889500130647
+    },
+    {
+      "index": 2,
+      "nominal_deg": 60,
+      "est_x": 1.2697715128563851,
+      "est_z": 4.023931187649632,
+      "est_yaw_deg": 49.33491199371681,
+      "converged": false,
+      "spread_m": 2.2301426328886964
+    },
+    {
+      "index": 3,
+      "nominal_deg": 90,
+      "est_x": 1.0832710034585964,
+      "est_z": 3.7959526432165447,
+      "est_yaw_deg": 76.56985644548611,
+      "converged": false,
+      "spread_m": 2.5205016440458112
+    },
+    {
+      "index": 4,
+      "nominal_deg": 120,
+      "est_x": 1.721146937645868,
+      "est_z": 4.665451657727957,
+      "est_yaw_deg": 122.68232020557829,
+      "converged": false,
+      "spread_m": 0.3314200524143059
+    },
+    {
+      "index": 5,
+      "nominal_deg": 150,
+      "est_x": 1.7065516597483692,
+      "est_z": 4.653425435929917,
+      "est_yaw_deg": 149.04329010017705,
+      "converged": false,
+      "spread_m": 0.0630039191393281
+    },
+    {
+      "index": 6,
+      "nominal_deg": 180,
+      "est_x": 1.6861029334186188,
+      "est_z": 4.678668231680871,
+      "est_yaw_deg": 178.23857520979072,
+      "converged": false,
+      "spread_m": 0.06645465968712401
+    },
+    {
+      "index": 7,
+      "nominal_deg": 210,
+      "est_x": 1.6842183155711732,
+      "est_z": 4.672712878246982,
+      "est_yaw_deg": -149.52821752473042,
+      "converged": false,
+      "spread_m": 0.030310556410878316
+    },
+    {
+      "index": 8,
+      "nominal_deg": 240,
+      "est_x": 1.6445777615099564,
+      "est_z": 4.281067898927697,
+      "est_yaw_deg": -116.39224587706333,
+      "converged": false,
+      "spread_m": 0.0013305292403370836
+    },
+    {
+      "index": 9,
+      "nominal_deg": 270,
+      "est_x": 1.8464930321345363,
+      "est_z": 4.793296925063553,
+      "est_yaw_deg": -80.93290801597094,
+      "converged": false,
+      "spread_m": 1.0214880336497533e-15
+    },
+    {
+      "index": 10,
+      "nominal_deg": 300,
+      "est_x": 1.7434399463426247,
+      "est_z": 4.776283425933536,
+      "est_yaw_deg": -46.92909219701608,
+      "converged": false,
+      "spread_m": 1.650695254744704e-09
+    },
+    {
+      "index": 11,
+      "nominal_deg": 330,
+      "est_x": 1.767200990453861,
+      "est_z": 4.780083513998323,
+      "est_yaw_deg": -22.634213619608825,
+      "converged": false,
+      "spread_m": 5.077966091757943e-09
+    }
+  ],
+  "final": {
+    "index": 11,
+    "nominal_deg": 330,
+    "est_x": 1.767200990453861,
+    "est_z": 4.780083513998323,
+    "est_yaw_deg": -22.634213619608825,
+    "converged": false,
+    "spread_m": 5.077966091757943e-09
+  }
+}
