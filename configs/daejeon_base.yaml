@@ -1,0 +1,47 @@
+# @package _global_
+#
+# Habitat config for building the robot's base occupancy map
+# (collect_occupancy_map.py). Loads the object-free Daejeon base building shipped
+# in habitat_data/ (one stage, one placeholder episode). Paths are relative to the
+# repository root -- run the collector from there.
+defaults:
+  - /benchmark/nav/objectnav: objectnav_mp3d
+  - _self_
+
+habitat:
+  environment:
+    max_episode_steps: 500
+
+  dataset:
+    type: ObjectNav-v1
+    split: val
+    data_path: habitat_data/datasets/objnav/daejeon_base/v1/{split}/{split}.json.gz
+    scenes_dir: habitat_data/scene_datasets/
+
+  simulator:
+    turn_angle: 30
+    forward_step_size: 0.25
+    scene_dataset: habitat_data/scene_datasets/daejeon_base/daejeon_base.scene_dataset_config.json
+    habitat_sim_v0:
+      gpu_device_id: 0
+      allow_sliding: False
+    agents:
+      main_agent:
+        # 1.5 m = the obstacle height band top (0.2-1.5 m, same band the localizer scans) and
+        # the navmesh agent height; with 1.5 m sensors this reproduces the shipped base map.
+        height: 1.5
+        radius: 0.1
+        sim_sensors:
+          rgb_sensor:
+            width: 640
+            height: 480
+            hfov: 79
+            position: [0, 1.5, 0]
+          depth_sensor:
+            width: 640
+            height: 480
+            hfov: 79
+            min_depth: 0.0
+            max_depth: 10.0
+            normalize_depth: True
+            position: [0, 1.5, 0]

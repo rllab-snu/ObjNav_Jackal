@@ -1,0 +1,11 @@
+# Extra deps for occupancy-map collection (collect_occupancy_map.py), installed into the
+# separate habitat env AFTER habitat-sim + habitat-lab (see README section 6).
+numpy==1.26.4
+numpy-quaternion
+scipy
+scikit-image
+opencv-python<4.10
+matplotlib
+imageio
+imageio-ffmpeg
+tqdm
