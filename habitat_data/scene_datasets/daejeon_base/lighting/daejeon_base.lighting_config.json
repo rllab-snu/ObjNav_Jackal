@@ -1,0 +1,60 @@
+{
+  "lights": {
+    "d_down": {
+      "type": "directional",
+      "direction": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "intensity": 2.4000000000000004,
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "d_a": {
+      "type": "directional",
+      "direction": [
+        0.6,
+        -0.6,
+        0.5
+      ],
+      "intensity": 1.2000000000000002,
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "d_b": {
+      "type": "directional",
+      "direction": [
+        -0.6,
+        -0.6,
+        -0.5
+      ],
+      "intensity": 1.2000000000000002,
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "d_up": {
+      "type": "directional",
+      "direction": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "intensity": 0.8,
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "stages": {"paths": {".json": ["stages"]}},
+  "light_setups": {"paths": {".json": ["lighting"]}},
+  "scene_instances": {"paths": {".json": ["scenes"]}}
+}

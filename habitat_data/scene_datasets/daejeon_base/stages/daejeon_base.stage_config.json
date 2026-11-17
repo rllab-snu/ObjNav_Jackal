@@ -1,0 +1,9 @@
+{
+  "render_asset": "../assets/daejeon.glb",
+  "nav_asset": "../daejeon_base.navmesh",
+  "up": [0, 0, 1],
+  "front": [0, 1, 0],
+  "origin": [0, 0, 0],
+  "units_to_meters": 1.0,
+  "requires_lighting": true
+}

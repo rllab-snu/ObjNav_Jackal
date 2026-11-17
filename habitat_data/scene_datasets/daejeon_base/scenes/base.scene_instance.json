@@ -1,0 +1,5 @@
+{
+  "stage_instance": {"template_name": "daejeon_base", "translation_origin": "asset_local", "translation": [0, 0, 0]},
+  "object_instances": [],
+  "default_lighting": "daejeon_base"
+}
